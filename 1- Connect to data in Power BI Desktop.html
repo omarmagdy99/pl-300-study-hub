@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1- Connect to data in Power BI Desktop | PL-300 Hub</title>
+    <!-- Google Fonts: Cairo for Arabic, Inter for English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --pbi-yellow: #F2C811;
+            --pbi-yellow-dark: #D4AD00;
+            --pbi-gold-glow: rgba(242, 200, 17, 0.25);
+            --bg-main: #0F172A;
+            --bg-card: #1E293B;
+            --bg-card-hover: #334155;
+            --bg-glass: rgba(30, 41, 59, 0.85);
+            --border-color: #334155;
+            --border-highlight: #475569;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-blue: #38BDF8;
+            --accent-green: #22C55E;
+            --accent-purple: #A855F7;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(242, 200, 17, 0.15);
+        }
+
+        .light {
+            --bg-main: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #F1F5F9;
+            --bg-glass: rgba(255, 255, 255, 0.9);
+            --border-color: #E2E8F0;
+            --border-highlight: #CBD5E1;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 20px rgba(212, 173, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Top Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pbi-yellow), var(--accent-blue));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Sticky Header */
+        header {
+            position: sticky;
+            top: 4px;
+            z-index: 900;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+        }
+
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--pbi-yellow);
+            color: #000;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            box-shadow: 0 0 15px var(--pbi-gold-glow);
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-exam {
+            background: rgba(242, 200, 17, 0.15);
+            color: var(--pbi-yellow);
+            border: 1px solid var(--pbi-yellow);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-toggle:hover {
+            border-color: var(--pbi-yellow);
+            color: var(--pbi-yellow);
+        }
+
+        .lang-switch {
+            display: flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 2px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .lang-btn.active {
+            background: var(--pbi-yellow);
+            color: #000;
+        }
+
+        /* Layout Main */
+        .container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Navigation / Table of Contents */
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toc-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border-right: 3px solid transparent;
+        }
+
+        [dir="ltr"] .toc-item a {
+            border-right: none;
+            border-left: 3px solid transparent;
+        }
+
+        .toc-item a:hover, .toc-item a.active {
+            background: var(--bg-card-hover);
+            color: var(--pbi-yellow);
+            border-color: var(--pbi-yellow);
+        }
+
+        .toc-item .step-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .toc-item a.active .step-num {
+            background: var(--pbi-yellow);
+            color: #000;
+            font-weight: 800;
+        }
+
+        /* Hero Banner */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)), url('./source/what-is-desktop_01.png') center/cover;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--pbi-yellow), var(--accent-blue), var(--accent-purple));
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .tag.primary {
+            background: rgba(242, 200, 17, 0.15);
+            color: var(--pbi-yellow);
+            border-color: rgba(242, 200, 17, 0.4);
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-card:hover {
+            border-color: var(--border-highlight);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: rgba(242, 200, 17, 0.1);
+            color: var(--pbi-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Dual Language Layout */
+        .bilingual-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .bilingual-block {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lang-col {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            position: relative;
+        }
+
+        .light .lang-col {
+            background: #F8FAFC;
+        }
+
+        .lang-flag {
+            position: absolute;
+            top: -12px;
+            left: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        [dir="rtl"] .lang-flag.ar {
+            left: auto;
+            right: 16px;
+        }
+
+        .lang-col.ar {
+            border-right: 4px solid var(--pbi-yellow);
+        }
+        [dir="ltr"] .lang-col.ar {
+            border-right: none;
+            border-left: 4px solid var(--pbi-yellow);
+        }
+
+        .lang-col.en {
+            border-right: 4px solid var(--accent-blue);
+            font-family: 'Inter', sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .lang-col p {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            margin-bottom: 12px;
+        }
+
+        .lang-col ul {
+            padding-right: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .lang-col.en ul {
+            padding-right: 0;
+            padding-left: 20px;
+        }
+
+        .lang-col li {
+            margin-bottom: 8px;
+        }
+
+        /* Interactive Screenshots Frame */
+        .screenshot-container {
+            margin: 24px 0;
+            background: #090D16;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .screenshot-header {
+            background: #1E293B;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot.red { background: #EF4444; }
+        .dot.yellow { background: #F59E0B; }
+        .dot.green { background: #10B981; }
+
+        .screenshot-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            direction: ltr;
+        }
+
+        .screenshot-img-wrapper {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .screenshot-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-img-wrapper:hover .screenshot-img {
+            transform: scale(1.015);
+        }
+
+        .zoom-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            font-weight: 700;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .screenshot-img-wrapper:hover .zoom-overlay {
+            opacity: 1;
+        }
+
+        .screenshot-caption {
+            padding: 12px 16px;
+            background: var(--bg-card);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Lightbox Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 95vw;
+            max-height: 90vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-highlight);
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #FFF;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Exam Pro Tips Accordion / Cards */
+        .exam-tip-card {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(30, 41, 59, 0.8));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .exam-tip-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-green);
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--pbi-yellow);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scroll Progress -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-content">
+            <div class="logo-group">
+                <div class="logo-icon"><i class="fa-solid fa-chart-column"></i></div>
+                <div class="logo-text">
+                    <h1>
+                        Power BI Study Hub
+                        <span class="badge-exam">PL-300 Exam Prep</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="controls-group">
+                <div class="lang-switch">
+                    <button class="lang-btn active" onclick="setLangMode('both')">الكل (Bilingual)</button>
+                    <button class="lang-btn" onclick="setLangMode('ar')">مصري فقط</button>
+                    <button class="lang-btn" onclick="setLangMode('en')">English</button>
+                </div>
+
+                <button class="btn-toggle" onclick="toggleTheme()" id="themeBtn" title="تغيير الثيم">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Container -->
+    <div class="container">
+        
+        <!-- Sidebar Navigation / TOC -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-list-ul"></i> محتويات الدرس</h3>
+            <ul class="toc-list">
+                <li class="toc-item">
+                    <a href="#intro" class="active">
+                        <span class="step-num">0</span>
+                        <span>المقدمة (Overview)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#prerequisites">
+                        <span class="step-num">1</span>
+                        <span>المتطلبات (Prerequisites)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#launch">
+                        <span class="step-num">2</span>
+                        <span>فتح البرنامج (Launch)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#connect">
+                        <span class="step-num">3</span>
+                        <span>الاتصال بالبيانات (Connect)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#navigator">
+                        <span class="step-num">4</span>
+                        <span>معاينة البيانات (Navigator)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#fields">
+                        <span class="step-num">5</span>
+                        <span>لوحة الحقول (Fields Pane)</span>
+                    </a>
+                </li>
+                                <li class="toc-item">
+                    <a href="#get-data-intro">
+                        <span class="step-num">6</span>
+                        <span>مقدمة وسيناريو البيانات (Introduction)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-files">
+                        <span class="step-num">7</span>
+                        <span>بيانات الملفات (Data Files)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-relational">
+                        <span class="step-num">8</span>
+                        <span>قواعد البيانات العلاقاتية (Relational Data)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-parameters">
+                        <span class="step-num">9</span>
+                        <span>المعاملات التفاعلية (Dynamic Parameters)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-nosql">
+                        <span class="step-num">10</span>
+                        <span>قواعد بيانات NoSQL (Cosmos DB)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-online-services">
+                        <span class="step-num">11</span>
+                        <span>الخدمات السحابية (Online Services)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-storage-mode">
+                        <span class="step-num">12</span>
+                        <span>نمط التخزين (Storage Mode)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-analysis-services">
+                        <span class="step-num">13</span>
+                        <span>تحليل أزيور (Azure Analysis Services)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-performance">
+                        <span class="step-num">14</span>
+                        <span>تحسين الأداء (Fix Performance Issues)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-import-errors">
+                        <span class="step-num">15</span>
+                        <span>أخطاء الاستيراد (Resolve Import Errors)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#get-data-summary">
+                        <span class="step-num">16</span>
+                        <span>الملخص النهائي (Module Summary)</span>
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#exam-tips">
+                        <span class="step-num"><i class="fa-solid fa-star"></i></span>
+                        <span>تريكات امتحان PL-300</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Hero Banner -->
+            <section class="hero" id="intro">
+                <div class="hero-tags">
+                    <span class="tag primary"><i class="fa-solid fa-bolt"></i> Quickstart Guide</span>
+                    <span class="tag"><i class="fa-regular fa-clock"></i> 40 دقيقة قراءة</span>
+                    <span class="tag"><i class="fa-solid fa-database"></i> Power BI Desktop Data Connectors</span>
+                </div>
+                <h1>الدرس 1: الربط بمصادر البيانات في Power BI Desktop</h1>
+                <p>تعلم كيفية الاتصال بمصادر البيانات المختلفة واستيراد ملفات Excel لبناء الموديلز والتقارير الاحترافية لشهادة مايكروسوفت PL-300.</p>
+            </section>
+
+            <!-- Introduction Section -->
+            <section class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-circle-play"></i></div>
+                        <h2>نظرة عامة على الدرس (Overview)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>في الشرح ده، هنمشي سوا خطوة بخطوة عشان نعرف إزاي نربط برنامج <strong>Power BI Desktop</strong> بمصادر البيانات المختلفة.</p>
+                        <p>دي بتعتبر <strong>أول وأهم خطوة</strong> في رحلتك لبناء الموديلز (Data Modeling) وإنشاء التقارير التفاعلية اللي بتطلبها منك شهادة مايكروسوفت PL-300!</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>In this quickstart, you connect to data using Power BI Desktop, which is the first step in building data models and creating reports.</p>
+                        <p>If you're not signed up for Power BI, sign up for a free trial before you begin.</p>
+                    </div>
+                </div>
+
+                <!-- Featured Image 1 -->
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <span class="screenshot-title">Power BI Desktop Overview Canvas</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/what-is-desktop_01.png')">
+                        <img src="./source/what-is-desktop_01.png" alt="Power BI Desktop Canvas Overview" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير لرؤية التفاصيل</div>
+                    </div>
+                    <div class="screenshot-caption">
+                        <i class="fa-solid fa-circle-info"></i> الشاشة الرئيسية لـ Power BI Desktop بعد تحميل تقرير تجريبي (Retail Analysis sample).
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 1: Prerequisites -->
+            <section class="section-card" id="prerequisites">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-list-check"></i></div>
+                        <h2>1. المتطلبات الأساسية للبدء (Prerequisites)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>عشان تنفذ الخطوات دي على جهازك وتطبق بنفسك، محتاج تجهز الحاجات الأساسية التالية:</p>
+                        <ul>
+                            <li><strong>تحميل برنامج Power BI Desktop:</strong> تطبيق مجاني بيشتغل على الكمبيوتر. تقدر تحمله مباشرة من موقع مايكروسوفت أو من متجر Microsoft Store.</li>
+                            <li><strong>تأكد من وجود Edge WebView2:</strong> بيتثبت تلقائياً مع Power BI وبيستخدم للمصادقة وتأكيد الهوية عند الاتصال بالخدمات السحابية.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>To complete the steps in this article, you need the following resources:</p>
+                        <ul>
+                            <li>Download and install Power BI Desktop (free application). You can download it directly or from the Microsoft Store.</li>
+                            <li>For many data connectors, Microsoft Edge WebView2 is required for authentication. WebView2 is typically installed automatically.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Launch Power BI Desktop -->
+            <section class="section-card" id="launch">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-rocket"></i></div>
+                        <h2>2. تشغيل برنامج Power BI Desktop</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>بعد ما تثبت البرنامج على جهازك، افتحه. أول ما يفتح هتظهرلك شاشة ترحيب فيها شروحات وفيديوهات تعليمية.</p>
+                        <p>تقدر تتابع التعليمات دي أو تقفل نافذة الترحيب عشان يبدأ معاك بـ <strong>Canvas فاضي (Blank Canvas)</strong>، وده المكان اللي هتبني فيه الرسومات التفاعلية والتقارير.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Once you install Power BI Desktop, launch the application so it's running on your local computer.</p>
+                        <p>You're presented with a Power BI tutorial. Follow the tutorial or close the dialog to start with a blank canvas. The canvas is where you create visuals and reports from your data.</p>
+                    </div>
+                </div>
+
+                <!-- Screenshot 1 -->
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <span class="screenshot-title">qs-connect-data_01.png</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/qs-connect-data_01.png')">
+                        <img src="./source/qs-connect-data_01.png" alt="Blank Canvas in Power BI Desktop" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                    <div class="screenshot-caption">
+                        <i class="fa-solid fa-image"></i> الشاشة الفاضية (Blank Canvas) لبرنامج Power BI Desktop الجاهزة للبدء.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Connect to Data -->
+            <section class="section-card" id="connect">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-plug"></i></div>
+                        <h2>3. الاتصال بالبيانات (Connect to Data)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>برنامج Power BI Desktop بيدي لك مرونة تامة للاتصال بأغلب أنواع مصادر البيانات في العالم؛ سواء ملفات اكسيل بسيطة، أو خدمات سحابية زي Salesforce, Microsoft Dynamics, Azure Blob Storage، أو قواعد بيانات ضخمة.</p>
+                        <p><strong>خطوات الاتصال:</strong></p>
+                        <ul>
+                            <li>من الشريط الرئيسي فوق <strong>(Home Ribbon)</strong> اضغط على زرار <strong>Get data</strong>.</li>
+                            <li>هتفتح لك نافذة فيها كل مصادر البيانات المتاحة. اختر منها نوع المصدر (مثل <strong>Excel</strong>) واضغط على زرار <strong>Connect</strong>.</li>
+                            <li>البرنامج هيطلب منك تختار مكان الملف المتاح لديك واضغط <strong>Open</strong>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>With Power BI Desktop, you can connect to many different types of data. These sources include basic data sources, such as a Microsoft Excel file, to online services like Salesforce, Dynamics, Azure Blob Storage, and many more.</p>
+                        <p>To connect to data, from the <strong>Home</strong> ribbon select <strong>Get data</strong>.</p>
+                        <p>Select <strong>Excel</strong> from the <strong>Get Data</strong> window, then select the <strong>Connect</strong> button. Browse to your file and select <strong>Open</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Screenshots 2, 3, 4 Grid -->
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">الخطوة الأولى: الضغط على Get Data من Home Ribbon</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/qs-connect-data_02.png')">
+                        <img src="./source/qs-connect-data_02.png" alt="Get Data Ribbon" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">الخطوة الثانية: اختيار Excel ثم اضغط Connect</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/qs-connect-data_03.png')">
+                        <img src="./source/qs-connect-data_03.png" alt="Get Data Window" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">الخطوة الثالثة: اختيار ملف البيانات ثم الضغط على Open</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/qs-connect-data_04.png')">
+                        <img src="./source/qs-connect-data_04.png" alt="File Selector" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4: Navigator Window -->
+            <section class="section-card" id="navigator">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-table-cells"></i></div>
+                        <h2>4. معاينة واختيار الجداول (Navigator Window)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>بعد ما البرنامج يقرأ محتويات الملف، هتفتح نافذة مهمة جداً اسمها <strong>Navigator</strong>.</p>
+                        <p>في النافذة دي تقدر تختار الجداول والشيتات اللي حابب تستوردها داخل Power BI عن طريق وضع علامة صح (Checkbox) جنب اسم الجدول. علم على الجداول المراد استورادها واضغط على زرار <strong>Load</strong> عشان يتم الاستيراد الفعلي للبيانات.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Power BI Desktop loads the workbook, reads its contents, and shows you available data using the <strong>Navigator</strong> window.</p>
+                        <p>Select the tables by marking the checkboxes beside each table you want to import, then select <strong>Load</strong> to import the data.</p>
+                    </div>
+                </div>
+
+                <!-- Screenshot 5 -->
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">qs-connect-data_05.png - نافذة Navigator</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/qs-connect-data_05.png')">
+                        <img src="./source/qs-connect-data_05.png" alt="Navigator Dialog Window" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                    <div class="screenshot-caption">
+                        <i class="fa-solid fa-check-double"></i> معاينة الجداول واختيارها قبل التحميل النهائي لبرنامج Power BI.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 5: Fields Pane -->
+            <section class="section-card" id="fields">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-folder-tree"></i></div>
+                        <h2>5. استعراض البيانات في لوحة الحقول (Fields Pane)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>أول ما يدوس Load والتحميل يخلص، هتلاقي البيانات استقرت وظهرت في لوحة <strong>Fields</strong> (أو Data Pane في الإصدارات الأحدث) الموجودة على اليمين.</p>
+                        <p>لما تضغط على السهم اللي جنب اسم الجدول، هيتفتح وتشوف كل الأعمدة والحقول المتاحة فيه، وبكده تكون جاهز تبدأ تعمل Drag & Drop للأعمدة وتعمل أول التقرير بتاعك!</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Once you load the tables, the <strong>Fields</strong> pane shows you the data. You can expand each table by selecting the arrow beside its name.</p>
+                        <p>In the image, the table is expanded, showing each of its fields. And that's it! You've connected to data in Power BI Desktop.</p>
+                    </div>
+                </div>
+
+                <!-- Screenshot 6 -->
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">qs-connect-data_06.png - لوحة الحقول Fields Pane</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/qs-connect-data_06.png')">
+                        <img src="./source/qs-connect-data_06.png" alt="Fields Pane Expanded" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                    <div class="screenshot-caption">
+                        <i class="fa-solid fa-list-check"></i> استعراض كافة الحقول والأعمدة داخل الجدول بعد استيراده.
+                    </div>
+                </div>
+            </section>
+
+            
+            <!-- Unit 1: Introduction -->
+            <section class="section-card" id="get-data-intro">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                        <h2>6. مقدمة وسيناريو استيراد البيانات (Introduction)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>في سيناريو شركة <strong>Tailwind Traders</strong>، مطلوب منك تجميع وتجهيز بيانات من مصادر مختلفة كلياً: مبيعات المعاملات مخزنة في قواعد <strong>SQL Server</strong>، وبيانات الموظفين التكميلية في ملفات <strong>Excel</strong>، وتفاصيل الشحنات كملفات <strong>JSON</strong> في قواعد <strong>Azure Cosmos DB</strong>، بالإضافة لتوقعات المبيعات في <strong>Azure Analysis Services</strong>.</p>
+                        <p>وظيفتك تدمج البيانات دي كلها وتعمل لها تنظيف وتجهيز باستخدام <strong>Power Query</strong> قبل ما تبني الموديل والتقارير ونشرها على Power BI Service.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>In this module scenario for Tailwind Traders, senior leadership requires building reports dependent on data residing in multiple repositories: SQL Server transactions, HR Excel files, Cosmos DB shipment JSON documents, and Azure Analysis Services financial projections.</p>
+                        <p>Using Power Query, you extract, transform, and clean the data before loading it into Power BI Desktop to construct semantic models, design interactive reports, and publish them to the Power BI service.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-intro_01.png - مخطط سحب البيانات من مصادر متنوعة</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-intro_01.png')">
+                        <img src="./source/get-data-intro_01.png" alt="Power Query data sources architecture overview" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                    <div class="screenshot-caption">
+                        <i class="fa-solid fa-circle-info"></i> مخطط تدفق البيانات من مصادر مختلفة عبر Power Query إلى برنامج Power BI.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 2: Data files -->
+            <section class="section-card" id="get-data-files">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-file-excel"></i></div>
+                        <h2>7. استيراد البيانات من الملفات (Data Files)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>الملفات المسطحة زي <strong>Excel, CSV, Text Files</strong> بتعد من أكتر المصادر الشائعة للبيانات. تقدر تربط ملف مخزن محلياً على جهازك أو ملف موجود في السحابة على <strong>OneDrive</strong> أو <strong>SharePoint</strong>.</p>
+                        <p>ميزة الربط بملفات السحابة هي إمكانية التحديث التلقائي المجدول للبيانات (Scheduled Refresh) بدون الحاجة لفتح Power BI Desktop أو إعداد Gateway يدوياً، بعكس الملفات المحلية التي تتطلب إدارة مصادر البيانات بنفسك.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Flat files such as Microsoft Excel, CSV, and text files are among the most common data sources. You can connect to files stored locally on your machine or hosted in the cloud via OneDrive for Work/School or SharePoint Online.</p>
+                        <p>Connecting to cloud-hosted files ensures seamless scheduled data refreshes, whereas local file connections require manual dataset maintenance or configuring an On-premises Data Gateway.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-files_01.png - أنواع الملفات المسطحة المتاحة</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-files_01.png')">
+                        <img src="./source/get-data-files_01.png" alt="Flat data files icons in Power BI" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-files_02.png - معاينة شيت Excel في نافذة Navigator</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-files_02.png')">
+                        <img src="./source/get-data-files_02.png" alt="Excel worksheet selection in Navigator" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 3: Relational data -->
+            <section class="section-card" id="get-data-relational">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-database"></i></div>
+                        <h2>8. الاتصال بقواعد البيانات العلاقاتية (Relational Data)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>قواعد البيانات العلاقاتية زي <strong>Microsoft SQL Server</strong> بتخزن البيانات في جداول مرتبطة بعلاقات. عشان تربط بها بتدخل اسم السيرفر والداتابيز، وبتحدد نوع المصادقة (Windows Authentication أو Database Account).</p>
+                        <p>تقدر تختار الجداول من نافذة Navigator، أو تكتب استعلام <strong>SQL Statement (T-SQL)</strong> مخصص عشان ترفع فقط الصفوف والأعمدة المطلوبة وتوفر في كمية البيانات المنقولة والأداء.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Relational databases such as Microsoft SQL Server store data in structured tables linked by relational key constraints. Connecting requires providing the server name, optional database name, and credential authentication method.</p>
+                        <p>You can select tables through the Navigator dialog or supply a custom T-SQL query statement to extract pre-filtered data directly from the server, minimizing data transfer volume.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-relational_01.png - نافذة الربط بسيرفر SQL Server</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-relational_01.png')">
+                        <img src="./source/get-data-relational_01.png" alt="SQL Server connection window" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-relational_02.png - إدخال بيانات السيرفر وقاعدة البيانات</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-relational_02.png')">
+                        <img src="./source/get-data-relational_02.png" alt="Database details dialog" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 4: Dynamic parameters -->
+            <section class="section-card" id="get-data-parameters">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-sliders"></i></div>
+                        <h2>9. إنشاء تقارير ديناميكية باستخدام المعاملات (Dynamic Parameters)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>المعاملات <strong>(Parameters)</strong> بتخلي الاستعلامات والتقارير ديناميكية ومستجيبة للتغييرات بمرونة عالية بدلاً من تثبيت القيم داخل الكويري:</p>
+                        <ul>
+                            <li><strong>التبديل بين بيئات العمل:</strong> تقدر تغير بيئة الاتصال بسهولة بين بيئة التطوير (Development) والتجربة (Testing) والإنتاج (Production) بتعديل قيمة الـ Parameter فقط.</li>
+                            <li><strong>الدوال المخصصة (Custom Functions):</strong> تحويل الكويري إلى دالة مخصصة تتيح تطبيق نفس خطوات التحويل على عدة مدخلات أو أعمدة دفعة واحدة.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Parameters allow queries and reports to be dynamic by substituting hardcoded values with customizable placeholder variables:</p>
+                        <ul>
+                            <li><strong>Environment Swapping:</strong> Seamlessly switch connections between Development, Testing, and Production environments by altering a single parameter value.</li>
+                            <li><strong>Custom Functions:</strong> Convert existing queries into reusable custom functions that dynamically apply transformation logic across multiple data inputs.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-parameters_01.png - إضافة معامل جديد في Power Query</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-parameters_01.png')">
+                        <img src="./source/get-data-parameters_01.png" alt="Add parameter window in Power Query" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-parameters_02.png - تطبيق قيمة المعامل على التقرير</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-parameters_02.png')">
+                        <img src="./source/get-data-parameters_02.png" alt="Result of applying parameter to report" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 5: NoSQL database -->
+            <section class="section-card" id="get-data-nosql">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-cubes"></i></div>
+                        <h2>10. الربط بقواعد البيانات غير العلاقاتية (NoSQL Database)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>قواعد بيانات <strong>NoSQL</strong> زي <strong>Azure Cosmos DB</strong> بتخزن البيانات في شكل مستندات مرنة مثل <strong>JSON</strong> بدون جدول بتصميم ثنائي الأبعاد.</p>
+                        <p>عند الاتصال بـ Cosmos DB داخل Power BI، السجلات بتظهر في البداية كـ <strong>Records</strong> مرادقة لـ JSON، وبتحتاج تستخدم زرار <strong>Expand</strong> في Power Query لفك الكائنات المترابطة والأكواد وتحويلها لأعمدة وصفوف منظمة.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>NoSQL databases like Azure Cosmos DB store semi-structured data as JSON documents rather than rigid tabular schemas.</p>
+                        <p>Upon connecting to Cosmos DB in Power BI, data appears initially as nested JSON Records. You use the Expand feature in Power Query Editor to unpack hierarchical document attributes into clean tabular columns.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-nosql_01.png - اختيار Azure Cosmos DB من مصادر البيانات</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-nosql_01.png')">
+                        <img src="./source/get-data-nosql_01.png" alt="Azure Cosmos DB connector in Get Data" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-nosql_02.png - معايرة وتصفح سجلات Cosmos DB</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-nosql_02.png')">
+                        <img src="./source/get-data-nosql_02.png" alt="Cosmos DB navigator records list" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 6: Online services -->
+            <section class="section-card" id="get-data-online-services">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-cloud"></i></div>
+                        <h2>11. الاتصال بالخدمات السحابية وقوائم شيربوينت (Online Services)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>برنامج Power BI بيتيح لك الاتصال بالخدمات والتطبيقات السحابية المختلفة مثل <strong>SharePoint Online Lists</strong> و <strong>Salesforce</strong> و <strong>Google Analytics</strong>.</p>
+                        <p>في حالة الربط بـ <strong>SharePoint Online List</strong>، بتدخل رابط الموقع الرئيسي (Site URL)، وتختار المصادقة بواسطة حساب المؤسسة (Organizational Account)، ثم تختار القائمة المطلوبة من نافذة Navigator.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Power BI Desktop integrates with cloud services including SharePoint Online Lists, Salesforce, Google Analytics, and Microsoft Dynamics 365.</p>
+                        <p>To connect to a SharePoint Online List, enter the site collection URL, authenticate with your Organizational Account, and select the desired list from the Navigator pane.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-online-services_01.png - إدخال رابط موقع SharePoint Online</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-online-services_01.png')">
+                        <img src="./source/get-data-online-services_01.png" alt="SharePoint List URL dialog" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-online-services_02.png - معاينة جداول وقوائم SharePoint</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-online-services_02.png')">
+                        <img src="./source/get-data-online-services_02.png" alt="SharePoint Navigator tables view" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 7: Storage mode -->
+            <section class="section-card" id="get-data-storage-mode">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-hard-drive"></i></div>
+                        <h2>12. اختيار نمط تخزين البيانات (Storage Mode: Import vs DirectQuery)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>تحديد <strong>Storage Mode</strong> بيحدد طريقة تعامل Power BI مع البيانات وتخزينها:</p>
+                        <ul>
+                            <li><strong>Import Mode (الافتراضي):</strong> بيتم نسخ البيانات بالكامل وحفظها في الذاكرة (VertiPaq Engine). بيدي أعلى سرعة للتفاعل مع الرسومات والتصفية، ويتطلب تحديث دوري (Data Refresh).</li>
+                            <li><strong>DirectQuery Mode:</strong> لا يتم نسخ البيانات، بل يتم إرسال استعلامات مباشرة لداتابيز المصدر مع كل تفاعل بالتقرير. مناسب للبيانات الضخمة جداً (Big Data) أو الحالات اللي بتتطلب بيانات لحظية (Real-time).</li>
+                            <li><strong>Dual Mode:</strong> يجمع بين الميزتين؛ الجدول يعمل كـ Import للسرعة وتخزين الكاش، ويستجيب لـ DirectQuery عند الحاجة.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Selecting the appropriate storage mode balances reporting performance against data freshness requirements:</p>
+                        <ul>
+                            <li><strong>Import Mode (Default):</strong> Imports and compresses data into the in-memory VertiPaq engine. Provides maximum performance and DAX capability with scheduled refreshes.</li>
+                            <li><strong>DirectQuery Mode:</strong> Queries the underlying source database directly without importing data. Ideal for massive datasets or strict real-time reporting needs.</li>
+                            <li><strong>Dual Mode:</strong> Hybrid behavior where tables act as cached Import data for fast visual rendering, but can fulfill DirectQuery requests when needed.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-storage-mode_01.png - قائمة اختيار نمط التخزين Storage Mode</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-storage-mode_01.png')">
+                        <img src="./source/get-data-storage-mode_01.png" alt="Storage mode selection dropdown" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 8: Azure Analysis Services -->
+            <section class="section-card" id="get-data-analysis-services">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <h2>13. الاتصال بـ (Azure Analysis Services)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>خدمة <strong>Azure Analysis Services</strong> هي منصة سحابية (PaaS) لإنشاء موديول بيانات مؤسسي موحد (Enterprise Tabular Model).</p>
+                        <p>عند الربط بها، يتوفر خيار <strong>Connect live (الاتصال المباشر)</strong>؛ في الخيار ده الموديل والمقاييس (Measures) والمعادلات مبنية ومحسوبة بالفعل في السيرفر، ويكون Power BI Desktop مجرد شاشة لاستعراض التقارير دون الحاجة لإعادة استيراد أو بناء الموديل.</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Azure Analysis Services provides enterprise-grade tabular data models hosted in the Azure cloud.</p>
+                        <p>When connecting, selecting <strong>Connect live</strong> links your Power BI report directly to the central model. Calculations, measures, and relationships remain managed centrally on the server, allowing instant visual reporting without data duplication.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-analysis-services_01.png - نافذة الربط بـ Analysis Services</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-analysis-services_01.png')">
+                        <img src="./source/get-data-analysis-services_01.png" alt="Analysis Services database connection dialog" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 9: Performance issues -->
+            <section class="section-card" id="get-data-performance">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                        <h2>14. حل مشاكل الأداء وطي الاستعلامات (Performance & Query Folding)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>عشان تضمن سرعة واستجابة التقرير، Power BI بيوفر تقنيات وأدوات للتحسين:</p>
+                        <ul>
+                            <li><strong>طي الاستعلامات (Query Folding):</strong> تحويل خطوات التنظيف والتصفية في Power Query إلى كود SQL أصلي (Native Query) يتنفذ داخل السيرفر قبل نقل البيانات لـ Power BI.</li>
+                            <li><strong>أداة تشخيص الاستعلام (Query Diagnostics):</strong> أداة تتيح لك تتبع وتحليل الوقت المستغرق في تنفيذ خطوات Power Query وتحديد الخطوات الثقيلة التي تسبب البطء.</li>
+                            <li><strong>Performance Analyzer:</strong> لقياس أداء العناصر البصرية على الصفحة ومعرفة وقت معالجة الكويري والرسومات.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>To address report performance and optimize data load times, Power BI provides built-in diagnostic tools and query optimization techniques:</p>
+                        <ul>
+                            <li><strong>Query Folding:</strong> Translates Power Query transformation steps back into native database SQL queries executed directly at the source server for peak efficiency.</li>
+                            <li><strong>Query Diagnostics:</strong> Logs and breaks down time spent during query evaluations to pinpoint performance bottlenecks in Power Query.</li>
+                            <li><strong>Performance Analyzer:</strong> Measures visual rendering speed and DAX engine response times within Power BI Desktop reports.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-performance_01.png - عرض الاستعلام الأصلي View Native Query</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-performance_01.png')">
+                        <img src="./source/get-data-performance_01.png" alt="View Native Query context menu option" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-performance_02.png - تشغيل أدوات Query Diagnostics</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-performance_02.png')">
+                        <img src="./source/get-data-performance_02.png" alt="Query diagnostics options in Power Query" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 10: Resolve import errors -->
+            <section class="section-card" id="get-data-import-errors">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <h2>15. معالجة أخطاء استيراد البيانات الشائعة (Resolve Import Errors)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>أثناء استيراد البيانات، قد تواجه أخطاء شائعة يتم معالجتها كالآتي:</p>
+                        <ul>
+                            <li><strong>Query Timeout Expired (انتهاء مهلة الاستعلام):</strong> يحدث بسبب سحب حجم ضخم من البيانات. حله: تقليل الصفوف أو الأعمدة وتصفية البيانات في SQL query.</li>
+                            <li><strong>Could Not Find File (تعذر العثور على الملف):</strong> يحدث عند نقل الملف أو تغيير اسمه. حله: تعديل مسار الملف عبر <strong>Data Source Settings</strong> في Power Query.</li>
+                            <li><strong>Data Type Mismatch:</strong> يحدث عند وجود قيم غير متوافقة في العمود. حله: مراجعة خطوة <strong>Change Type</strong> في Power Query وتنظيف القيم الخاطئة.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>Common data import errors encountered during ingestion and their resolutions include:</p>
+                        <ul>
+                            <li><strong>Query Timeout Expired:</strong> Occurs when fetching excessive data volumes. Resolved by filtering rows, selecting fewer columns, or refining the source SQL query.</li>
+                            <li><strong>Could Not Find File:</strong> Triggered when source file paths or names change. Fixed by updating the file path in <strong>Data Source Settings</strong>.</li>
+                            <li><strong>Data Type Mismatch:</strong> Happens when incoming values conflict with column data types. Resolved by updating <strong>Change Type</strong> steps in Power Query.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-import-errors_01.png - خطأ انتهاء مهلة الاستعلام Query Timeout</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-import-errors_01.png')">
+                        <img src="./source/get-data-import-errors_01.png" alt="Query timeout expired error dialog" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+
+                <div class="screenshot-container">
+                    <div class="screenshot-header">
+                        <div class="window-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="screenshot-title">get-data-import-errors_02.png - خطأ عدم العثور على الملف Could Not Find File</span>
+                    </div>
+                    <div class="screenshot-img-wrapper" onclick="openLightbox('./source/get-data-import-errors_02.png')">
+                        <img src="./source/get-data-import-errors_02.png" alt="Could not find file error message" class="screenshot-img">
+                        <div class="zoom-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i> اضغط للتكبير</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 11: Summary -->
+            <section class="section-card" id="get-data-summary">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                        <h2>16. الملخص النهائي لموديول استيراد البيانات (Module Summary)</h2>
+                    </div>
+                </div>
+
+                <div class="bilingual-block">
+                    <div class="lang-col ar">
+                        <span class="lang-flag ar">المصري الشارح</span>
+                        <p>في الموديول ده، غطينا كافة جوانب سحب البيانات من مختلف المصادر (ملفات مسطحة، قواعد بيانات علاقاتية وغير علاقاتية، خدمات سحابية، وسيرفرات تحليلية).</p>
+                        <p>عرفنا إزاي نختار <strong>Storage Mode</strong> المناسب (Import vs DirectQuery)، وإزاي نستغل <strong>Query Folding</strong> لتحسين الأداء ونحل أخطاء الاستيراد الشائعة لتجهيز بيانات دقيقة وجاهزة للموديلينج والتقارير في امتحان PL-300!</p>
+                    </div>
+
+                    <div class="lang-col en">
+                        <span class="lang-flag en">Microsoft Official</span>
+                        <p>In this module, you learned how to ingest data across diverse platforms including flat files, relational/NoSQL databases, cloud applications, and Azure Analysis Services.</p>
+                        <p>You explored selecting appropriate Storage Modes (Import vs. DirectQuery), leveraging Query Folding for performance tuning, and troubleshooting common import errors to establish robust data connections for PL-300 certification.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exam Tips Section -->
+            <section class="exam-tip-card" id="exam-tips">
+                <div class="exam-tip-header">
+                    <i class="fa-solid fa-graduation-cap"></i> تريكات مهمة لشهادة PL-300 (Exam Focus Points)
+                </div>
+                <ul style="padding-right: 20px; color: var(--text-primary); line-height: 1.9;">
+                    <li><strong>الفرق بين Load و Transform Data:</strong> زرار <code>Load</code> بيحمل البيانات مباشرة للموديل، بينما <code>Transform Data</code> بيفتح تحرير Power Query لتنظيف البيانات وتغيير أنواع الأعمدة قبل تحميلها.</li>
+                    <li><strong>أنواع الاتصال (Storage Modes):</strong> الربط بملفات Excel بيكون من نوع <strong>Import Mode</strong> (يتم نسخ البيانات وحفظها داخل ملف .pbix).</li>
+                    <li><strong>تأثير تحديث البيانات (Data Refresh):</strong> في حالة تغير ملف البيانات في مصدره، تقدر تضغط Refresh في Power BI ليتم إعادة قراءة البيانات فوراً.</li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div class="modal" id="lightboxModal" onclick="closeLightbox()">
+        <button class="modal-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+        <img src="" alt="Zoomed Screenshot" class="modal-content" id="modalImg" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>PL-300 Power BI Study Hub &copy; 2026 - تم إعداده وتطويره بالشرح المصري والإنجليزي الموثق من Microsoft Learn</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Scroll Progress Indicator
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+
+            // Update TOC Active State
+            const sections = document.querySelectorAll("section[id]");
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 120;
+                const sectionHeight = section.offsetHeight;
+                const id = section.getAttribute("id");
+                const tocLink = document.querySelector(`.toc-item a[href="#${id}"]`);
+
+                if (winScroll >= sectionTop && winScroll < sectionTop + sectionHeight) {
+                    document.querySelectorAll(".toc-item a").forEach(a => a.classList.remove("active"));
+                    if(tocLink) tocLink.classList.add("active");
+                }
+            });
+        };
+
+        // Theme Toggle (Dark / Light)
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById("themeBtn");
+            if (html.classList.contains("dark")) {
+                html.classList.remove("dark");
+                html.classList.add("light");
+                btn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            } else {
+                html.classList.remove("light");
+                html.classList.add("dark");
+                btn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            }
+        }
+
+        // Language Filter Toggle
+        function setLangMode(mode) {
+            const arCols = document.querySelectorAll('.lang-col.ar');
+            const enCols = document.querySelectorAll('.lang-col.en');
+            const btns = document.querySelectorAll('.lang-btn');
+
+            btns.forEach(b => b.classList.remove('active'));
+
+            if (mode === 'both') {
+                btns[0].classList.add('active');
+                arCols.forEach(c => c.style.display = 'block');
+                enCols.forEach(c => c.style.display = 'block');
+                document.querySelectorAll('.bilingual-block').forEach(b => b.style.gridTemplateColumns = '1fr 1fr');
+            } else if (mode === 'ar') {
+                btns[1].classList.add('active');
+                arCols.forEach(c => c.style.display = 'block');
+                enCols.forEach(c => c.style.display = 'none');
+                document.querySelectorAll('.bilingual-block').forEach(b => b.style.gridTemplateColumns = '1fr');
+            } else if (mode === 'en') {
+                btns[2].classList.add('active');
+                arCols.forEach(c => c.style.display = 'none');
+                enCols.forEach(c => c.style.display = 'block');
+                document.querySelectorAll('.bilingual-block').forEach(b => b.style.gridTemplateColumns = '1fr');
+            }
+        }
+
+        // Lightbox Zoom Handler
+        function openLightbox(src) {
+            const modal = document.getElementById("lightboxModal");
+            const modalImg = document.getElementById("modalImg");
+            modalImg.src = src;
+            modal.classList.add("active");
+        }
+
+        function closeLightbox() {
+            document.getElementById("lightboxModal").classList.remove("active");
+        }
+    </script>
+</body>
+</html>
