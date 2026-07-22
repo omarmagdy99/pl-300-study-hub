@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Test: Connect to Data | PL-300 Study Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* NOTE FOR STYLING PASS: this is intentionally minimal/utilitarian CSS.
+   All of it may be freely rewritten. Do not rename the ids/classes marked
+   "JS HOOK" below — the engine below selects the DOM through them. */
+:root {
+  --pbi-yellow: #F2C811; --pbi-yellow-dark: #D4AD00; --bg-main: #0F172A; --bg-card: #1E293B;
+  --bg-card-hover: #334155; --border-color: #334155; --text-primary: #F8FAFC; --text-secondary: #94A3B8;
+  --text-muted: #64748B; --accent-blue: #38BDF8; --accent-green: #22C55E; --accent-red: #EF4444;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px;
+}
+.light { --bg-main: #F8FAFC; --bg-card: #FFFFFF; --bg-card-hover: #F1F5F9; --border-color: #E2E8F0; --text-primary: #0F172A; --text-secondary: #475569; --text-muted: #94A3B8; }
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family:'Cairo','Inter',sans-serif; background:var(--bg-main); color:var(--text-primary); line-height:1.7; }
+.wrap { max-width: 820px; margin: 30px auto; padding: 0 20px; }
+.card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:26px; margin-bottom:20px; }
+.btn { background:var(--pbi-yellow); color:#000; border:none; padding:12px 22px; border-radius:var(--radius-sm); font-weight:800; cursor:pointer; font-family:inherit; font-size:1rem; }
+.btn.secondary { background:var(--bg-card-hover); color:var(--text-primary); border:1px solid var(--border-color); }
+.btn:disabled { opacity:0.4; cursor:not-allowed; }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.badge { background:rgba(242,200,17,0.15); color:var(--pbi-yellow); border:1px solid var(--pbi-yellow); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem; }
+.progress-track { height:8px; background:var(--bg-card-hover); border-radius:4px; overflow:hidden; margin-bottom:24px; }
+.progress-fill { height:100%; background:linear-gradient(90deg, var(--pbi-yellow), var(--accent-blue)); width:0%; }
+.q-meta { color:var(--text-muted); font-size:0.85rem; margin-bottom:10px; }
+.q-stem { font-size:1.05rem; font-weight:700; margin-bottom:16px; direction:ltr; text-align:left; }
+.q-scenario { background:rgba(56,189,248,0.08); border:1px solid var(--accent-blue); border-radius:var(--radius-sm); padding:14px; margin-bottom:16px; direction:ltr; text-align:left; font-size:0.95rem; color:var(--text-secondary); }
+.opt { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:1px solid var(--border-color); border-radius:var(--radius-sm); margin-bottom:10px; cursor:pointer; direction:ltr; text-align:left; }
+.opt:hover { border-color: var(--pbi-yellow); }
+.opt.selected { border-color:var(--pbi-yellow); background:rgba(242,200,17,0.08); }
+.opt input { margin-top:3px; }
+.nav-row { display:flex; justify-content:space-between; margin-top:22px; gap:10px; }
+.rules li { margin-bottom:8px; }
+.hidden { display:none !important; }
+.score-hero { text-align:center; padding:20px; }
+.score-num { font-size:3rem; font-weight:900; color:var(--pbi-yellow); }
+.pass { color:var(--accent-green); } .fail { color:var(--accent-red); }
+.review-item { border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:16px; margin-bottom:12px; }
+.review-item.correct { border-right:4px solid var(--accent-green); }
+.review-item.wrong { border-right:4px solid var(--accent-red); }
+[dir="ltr"] .review-item.correct { border-right:none; border-left:4px solid var(--accent-green); }
+[dir="ltr"] .review-item.wrong { border-right:none; border-left:4px solid var(--accent-red); }
+.review-ans { font-size:0.9rem; margin:6px 0; direction:ltr; text-align:left; }
+.review-explain { background:rgba(0,0,0,0.15); border-radius:var(--radius-sm); padding:12px; margin-top:8px; font-size:0.92rem; }
+.review-explain a { color:var(--pbi-yellow); }
+a.backlink { color:var(--accent-blue); text-decoration:none; font-size:0.85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div><strong>PL-300 Study Hub</strong> — <span class="badge">Practice Test</span></div>
+    <a href="index.html" class="backlink"><i class="fa-solid fa-arrow-right"></i> رجوع للدرس</a>
+  </div>
+
+  <!-- JS HOOK: #screen-start -->
+  <div id="screen-start" class="card">
+    <h1 style="margin-bottom:14px;">اختبار تدريبي: الربط بمصادر البيانات (Connect to Data)</h1>
+    <p style="color:var(--text-secondary); margin-bottom:14px;">
+      اختبار مصمم على نمط أسئلة شهادة <strong>PL-300</strong>، بيغطي كل النقاط اللي درستها في الدرس ده:
+      الاتصال بالبيانات، Navigator، Storage Modes، Query Folding، الأخطاء الشائعة، وأكتر.
+    </p>
+    <div class="q-scenario" style="direction:rtl; text-align:right;">
+      <strong>قواعد الاختبار:</strong>
+      <ul class="rules" style="margin-top:8px; padding-right:20px;">
+        <li>الأسئلة والاختيارات بالإنجليزي (زي الامتحان الحقيقي بالظبط)، والشرح بعد كل سؤال بالمصري.</li>
+        <li>بعض الأسئلة "اختر إجابتين" — دي محتاجة أكتر من اختيار صح.</li>
+        <li>آخر 3 أسئلة عبارة عن سيناريو (Case Study) بأسئلة Yes/No — <strong>زي الامتحان الحقيقي بالظبط، أول ما تنتقل للسؤال اللي بعده جوه السيناريو ده مش هتقدر ترجع تغيّر إجابتك</strong>. ده تدريب مقصود على القاعدة دي.</li>
+        <li>في الآخر هتاخد نتيجة من 1000 (زي نظام تصحيح الامتحان الحقيقي)، والنجاح من 700.</li>
+      </ul>
+    </div>
+    <button class="btn" id="btn-start">ابدأ الاختبار <i class="fa-solid fa-play"></i></button>
+  </div>
+
+  <!-- JS HOOK: #screen-quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="q-meta" id="q-meta">Question 1 of 32</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="q-scenario-box" class="q-scenario hidden"></div>
+    <div class="q-stem" id="q-stem"></div>
+    <div id="q-options"></div>
+    <div class="nav-row">
+      <button class="btn secondary" id="btn-prev">السابق</button>
+      <button class="btn" id="btn-next">التالي</button>
+    </div>
+  </div>
+
+  <!-- JS HOOK: #screen-results -->
+  <div id="screen-results" class="card hidden">
+    <div class="score-hero">
+      <div class="score-num" id="score-num">0/1000</div>
+      <div id="score-verdict" style="font-size:1.3rem; font-weight:800; margin-top:6px;"></div>
+      <div style="color:var(--text-secondary); margin-top:8px;" id="score-raw"></div>
+    </div>
+    <div style="margin-top:20px;">
+      <button class="btn secondary" id="btn-retry">أعد المحاولة <i class="fa-solid fa-rotate-right"></i></button>
+    </div>
+  </div>
+
+  <div id="screen-review"></div>
+
+</div>
+
+<script>
+/* =========================================================================
+   CONTENT: the question bank. Each item:
+   type: 'single' | 'multi' | 'yesno'
+   scenario: optional shared scenario text shown above a group of yesno items
+   stem: English question text (matches real exam register)
+   options: English answer choices
+   correct: array of correct option indices (single = 1 item, multi = 2+, yesno = [0] for Yes / [1] for No)
+   explain: Arabic rationale shown in the review screen
+   ref: the index.html section id to link back to for review
+   lockPrev: true means "previous" is disabled once you've left this question (used for the yes/no case-study block, matching real PL-300 exam behavior)
+   ========================================================================= */
+const CASE_STUDY_SCENARIO = 'Case study — Tailwind Traders: you are combining sales transactions from SQL Server, HR data from an Excel file, shipment records from Azure Cosmos DB, and sales projections from Azure Analysis Services into a single Power BI report.\n\nFor each statement below, choose Yes if it is true or No if it is false.\n\nImportant: once you move on to the next statement, you will NOT be able to go back and change your answer for this statement — exactly like the real PL-300 exam.';
+
+const QUESTIONS = [
+  { type:'single', stem:'In Power BI Desktop, which ribbon tab contains the "Get data" button used to start a new data connection?',
+    options:['Insert','Home','View','Modeling'], correct:[1],
+    explain:'زرار Get Data موجود في تبويب Home Ribbon، زي ما شفنا بالظبط في خطوات "الاتصال بالبيانات".', ref:'connect' },
+
+  { type:'single', stem:'After selecting a data source type and clicking Connect, which window lets you preview and choose which tables to import?',
+    options:['Query Editor','Data Source Settings','Navigator','Fields pane'], correct:[2],
+    explain:'نافذة Navigator هي اللي بتظهر بعد قراءة الملف/المصدر، وفيها تحط علامة صح على الجداول اللي عايز تستوردها.', ref:'navigator' },
+
+  { type:'single', stem:'What is the key difference between selecting "Load" versus "Transform Data" in the Navigator window?',
+    options:['Load opens Power Query Editor first; Transform Data imports directly',
+             'Transform Data opens Power Query Editor to clean/shape the data before loading; Load imports the data directly into the model',
+             'They do exactly the same thing',
+             'Load only works with Excel files'], correct:[1],
+    explain:'دي من أهم نقاط الامتحان: Load = تحميل مباشر للموديل. Transform Data = يفتحلك Power Query الأول عشان تنضف/تعدل البيانات قبل التحميل.', ref:'exam-tips' },
+
+  { type:'single', stem:'Which pane in Power BI Desktop displays the tables and columns after data has been loaded?',
+    options:['Report view canvas','Fields pane','Navigator','Power Query ribbon'], correct:[1],
+    explain:'لوحة Fields (على الشمال/اليمين حسب اللغة) هي اللي بتعرض الجداول والأعمدة بعد التحميل، وتقدر توسّعها بالسهم جنب اسم الجدول.', ref:'fields' },
+
+  { type:'single', stem:'Which component is required for browser-based (interactive) authentication with many Power BI Desktop data connectors?',
+    options:['.NET Framework 4.8','Microsoft Edge WebView2','Internet Explorer 11','Java Runtime'], correct:[1],
+    explain:'Edge WebView2 بيتثبت تلقائياً غالباً، وهو المكوّن اللي بيسمح بالمصادقة (Authentication) لمعظم الموصلات السحابية.', ref:'prerequisites' },
+
+  { type:'single', stem:'Which of the following is NOT typically classified as a flat-file data source in Power BI?',
+    options:['CSV','Excel workbook','Azure Cosmos DB','Text file'], correct:[2],
+    explain:'Cosmos DB قاعدة بيانات NoSQL سحابية، مش ملف مسطح زي Excel وCSV والملفات النصية.', ref:'get-data-files' },
+
+  { type:'single', stem:'What is a key advantage of connecting to an Excel file hosted on OneDrive/SharePoint instead of a local copy on your PC?',
+    options:['It always loads faster the first time','It supports scheduled automatic refresh in the Power BI service without configuring a gateway','It skips the Navigator window entirely','It does not require Power Query'], correct:[1],
+    explain:'الملفات السحابية (OneDrive/SharePoint) بتسمح بالتحديث المجدول التلقائي (Scheduled Refresh) من غير ما تحتاج تجهيز Gateway، عكس الملفات المحلية.', ref:'get-data-files' },
+
+  { type:'multi', stem:'Which TWO of these sources typically require an On-premises Data Gateway for scheduled refresh in the Power BI service? (Select two)',
+    options:['A CSV file stored on a local hard drive','An Excel file hosted on OneDrive for Business','An on-premises SQL Server database','An Azure SQL Database reachable over the public internet'],
+    correct:[0,2],
+    explain:'أي مصدر "جوه" الشبكة المحلية أو جهازك (ملف محلي، أو SQL Server داخل الشركة) محتاج Gateway عشان خدمة Power BI السحابية توصله. المصادر السحابية أصلاً (زي OneDrive أو Azure SQL) متاحة مباشرة من غير Gateway.', ref:'get-data-files' },
+
+  { type:'single', stem:'Which connector would you use to import transactional sales data stored in Microsoft SQL Server?',
+    options:['Web connector','SQL Server connector','OData Feed','Folder connector'], correct:[1],
+    explain:'موصل SQL Server هو المخصص للاتصال المباشر بقواعد بيانات SQL Server العلاقاتية.', ref:'get-data-relational' },
+
+  { type:'single', stem:'When connecting to an on-premises SQL Server, which TWO authentication options are most commonly offered?',
+    options:['Anonymous and OAuth only','Windows and Database (username/password)','API key only','Social media login only'], correct:[1],
+    explain:'الاتصال بـ SQL Server عادة بيديك اختيار بين Windows Authentication (بيانات دخول الويندوز) أو Database Authentication (يوزر نيم وباسورد خاصين بقاعدة البيانات).', ref:'get-data-relational' },
+
+  { type:'single', stem:'What is the main purpose of using a Query Parameter in Power Query?',
+    options:['To automatically rename columns','To dynamically change a value — like a server name, file path, or date filter — without editing every query step manually','To merge two tables together','To create a relationship in the data model'], correct:[1],
+    explain:'الـ Parameter بيخليك تغيّر قيمة (زي اسم سيرفر أو مسار ملف) في مكان واحد بدل ما تعدل كل خطوة بخطوة في كل الكويريز.', ref:'get-data-parameters' },
+
+  { type:'single', stem:'A common real-world use of a Power Query parameter is to:',
+    options:['Switch a report\'s data source between Development and Production environments','Change the report\'s color theme','Add a new visual to the report canvas','Publish the report to the Power BI service'], correct:[0],
+    explain:'من أشهر استخدامات الـ Parameters: التبديل السريع بين بيئة التطوير (Dev) وبيئة الإنتاج (Prod) من غير ما تلمس كل كويري.', ref:'get-data-parameters' },
+
+  { type:'single', stem:'Which data source is best described as a NoSQL, schema-less database commonly used for semi-structured JSON documents (e.g. shipment records)?',
+    options:['SQL Server','Azure Cosmos DB','A SharePoint list','An Excel workbook'], correct:[1],
+    explain:'Cosmos DB هي قاعدة NoSQL بتخزن مستندات JSON مش ملتزمة بسكيمة ثابتة زي الجداول العلاقاتية.', ref:'get-data-nosql' },
+
+  { type:'single', stem:'When importing data from Azure Cosmos DB, nested JSON fields typically need to be:',
+    options:['Deleted before loading','Expanded into flat columns using Power Query\'s "Expand" feature','Converted to Excel first','Loaded only in DirectQuery mode'], correct:[1],
+    explain:'الحقول المتداخلة (Nested) في مستندات JSON محتاجة "Expand" في Power Query عشان تتحول لأعمدة عادية تقدر تستخدمها في الموديل.', ref:'get-data-nosql' },
+
+  { type:'single', stem:'Which of these is an example of connecting to an "online service" data source, as opposed to a file or a database?',
+    options:['A SharePoint Online list','A local text file on your PC','A USB-attached external hard drive','A printed PDF report'], correct:[0],
+    explain:'SharePoint Online List/Site مثال كلاسيكي على "Online Services" — مصدر بيانات سحابي بيتوصل بيه عن طريق رابط الموقع.', ref:'get-data-online-services' },
+
+  { type:'single', stem:'In Import storage mode, the data is:',
+    options:['Queried live from the source every single time a visual refreshes','Copied into the Power BI data model and compressed in memory','Never actually loaded — only cached in the browser','Streamed continuously in real time by default'], correct:[1],
+    explain:'وضع Import بينسخ البيانات فعلياً جوه ملف الـ Power BI ويضغطها في الذاكرة — عشان كده بيكون أسرع وضع في الأداء عادةً.', ref:'get-data-storage-mode' },
+
+  { type:'single', stem:'What is the main trade-off of choosing DirectQuery instead of Import?',
+    options:['DirectQuery reports are always faster than Import','DirectQuery avoids storing a data copy and shows near real-time data, but query performance is typically slower and some DAX features are limited','DirectQuery does not support table relationships at all','DirectQuery requires no data source connection'], correct:[1],
+    explain:'DirectQuery ميزته إنه مش بينسخ البيانات وبيوريك أحدث نسخة أول بأول، لكن الأداء عادة أبطأ من Import وفيه قيود على بعض دوال DAX.', ref:'get-data-storage-mode' },
+
+  { type:'single', stem:'DirectLake mode is a newer storage option tied to Microsoft Fabric/OneLake. What is its main benefit?',
+    options:['It only works inside Excel and replaces Import entirely','It reads Delta Lake table files directly from OneLake without a full data import or traditional DirectQuery overhead — combining Import-like speed with near-real-time freshness','It is identical to DirectQuery in every way','It removes the need for any data modeling'], correct:[1],
+    explain:'DirectLake خاص بـ Microsoft Fabric — بيقرأ ملفات Delta Lake في OneLake مباشرة من غير ما ينسخ البيانات زي Import، وده بيديله سرعة قريبة من Import مع حداثة بيانات قريبة من DirectQuery. مفهوم مهم للامتحان حتى لو مش هتشتغل بيه يومياً.', ref:'get-data-storage-mode' },
+
+  { type:'single', stem:'Which storage mode is generally the best fit for a small, mostly-static Excel workbook feeding a single dashboard?',
+    options:['Import','DirectQuery','Live Connection only','Excel data cannot be loaded into Power BI'], correct:[0],
+    explain:'لملف Excel صغير وشبه ثابت، وضع Import هو الأنسب: سريع، والبيانات مش بتتغير كتير فمفيش داعي لـ DirectQuery.', ref:'get-data-storage-mode' },
+
+  { type:'single', stem:'Which setting controls whether Power Query is allowed to combine data from two sources that have different trust levels (e.g. a public web source and an internal organizational database)?',
+    options:['Storage mode','Privacy level','Column data type','Relationship cardinality'], correct:[1],
+    explain:'مستويات الخصوصية (Privacy Levels: None / Public / Organizational / Private) بتتحكم في إمكانية دمج البيانات بين مصادر مختلفة الثقة، وبتتحدد من Data Source Settings — وممكن كمان تمنع Query Folding لو المستويات متعارضة.', ref:'connect' },
+
+  { type:'single', stem:'When connecting Power BI Desktop to Azure Analysis Services, the typical connection type used is:',
+    options:['Import, copying the entire tabular model locally','Live Connection, using the existing AAS model\'s tables, relationships, and measures directly','DirectQuery exclusively','A CSV export of the model'], correct:[1],
+    explain:'الاتصال بـ Azure Analysis Services عادة بيكون Live Connection — يعني Power BI بيستخدم الموديل الموجود فعلاً (بعلاقاته وقياساته) من غير نسخ.', ref:'get-data-analysis-services' },
+
+  { type:'single', stem:'A key limitation when live-connected to Azure Analysis Services from Power BI Desktop is that you:',
+    options:['Cannot create any visuals at all','Cannot add new measures or modify the underlying data model, since it belongs to the external AAS model','Cannot use slicers','Cannot publish the report to the service'], correct:[1],
+    explain:'بما إن الموديل ملك AAS، مش هتقدر تضيف Measures جديدة أو تعدل الموديل من جوه Power BI Desktop في وضع الـ Live Connection ده.', ref:'get-data-analysis-services' },
+
+  { type:'single', stem:'"Query Folding" refers to:',
+    options:['Compressing a Power BI file for storage','Translating Power Query transformation steps into a native query (e.g. SQL) that runs at the data source instead of locally','Hiding unused columns from a report','Collapsing the ribbon menu to save screen space'], correct:[1],
+    explain:'Query Folding يعني تحويل خطوات التنظيف والفلترة في Power Query لكود ينفذ عند المصدر نفسه (زي SQL) بدل ما ينفذ محلياً — ده بيحسّن الأداء جداً.', ref:'get-data-performance' },
+
+  { type:'single', stem:'Query Folding is generally NOT possible when the data source is a:',
+    options:['SQL Server database','Flat file such as an Excel workbook or CSV','Azure SQL Database','A source that natively supports SQL queries'], correct:[1],
+    explain:'الملفات المسطحة زي Excel وCSV معندهاش "محرك استعلام" عند المصدر يستقبل الكويري، فكل الخطوات بتتنفذ محلياً جوه Power Query.', ref:'get-data-performance' },
+
+  { type:'single', stem:'Which tool would you use specifically to log and analyze the time taken by each Power Query transformation step?',
+    options:['Performance Analyzer','Query Diagnostics','DAX Studio','Windows Task Manager'], correct:[1],
+    explain:'Query Diagnostics هي الأداة المخصصة لتتبع وتحليل وقت تنفيذ كل خطوة داخل Power Query.', ref:'get-data-performance' },
+
+  { type:'single', stem:'Which tool measures visual rendering time and DAX query duration in the Report view (not the Power Query steps)?',
+    options:['Query Diagnostics','Performance Analyzer','Navigator','Data Source Settings'], correct:[1],
+    explain:'Performance Analyzer بيقيس أداء العناصر البصرية (Visuals) واستعلامات DAX في صفحة التقرير — نطاقه مختلف عن Query Diagnostics اللي بيركز على خطوات Power Query.', ref:'get-data-performance' },
+
+  { type:'single', stem:'"Query Timeout Expired" errors typically occur because:',
+    options:['The wrong file format was selected','An excessively large volume of data is being requested from the source in one go','There is no internet connection issue at all','Power BI Desktop was installed incorrectly'], correct:[1],
+    explain:'الخطأ ده بيحصل عادة لما بتطلب كمية بيانات ضخمة جداً مرة واحدة — الحل بيكون تقليل الأعمدة/الصفوف أو فلترة الاستعلام من المصدر.', ref:'get-data-import-errors' },
+
+  { type:'single', stem:'If a linked Excel file has been moved or renamed on disk, Power BI Desktop will typically show:',
+    options:['A "Data Type Mismatch" error','A "Could Not Find File" error, fixable by updating Data Source Settings','A "Query Timeout" error','No error at all'], correct:[1],
+    explain:'لو الملف اتنقل أو اتغيّر اسمه، هيظهر خطأ "Could Not Find File"، وبيتحل بتعديل مسار الملف من Data Source Settings.', ref:'get-data-import-errors' },
+
+  { type:'single', stem:'A "Data Type Mismatch" error is usually resolved by:',
+    options:['Deleting the entire query','Reviewing and correcting the "Changed Type" step in Power Query','Restarting the computer','Switching the storage mode to DirectQuery'], correct:[1],
+    explain:'مراجعة خطوة Change Type في Power Query وتصحيح نوع البيانات للعمود اللي فيه القيم الغلط بيحل المشكلة دي غالباً.', ref:'get-data-import-errors' },
+
+  { type:'yesno', scenario:CASE_STUDY_SCENARIO,
+    stem:'Statement 1: Query folding will behave identically for the Excel HR data and the SQL Server sales transactions.',
+    options:['Yes','No'], correct:[1], lockPrev:true,
+    explain:'لأ — الفولدنج بيشتغل مع SQL Server (بيترجم لاستعلام SQL عند المصدر) لكن مش بيشتغل بنفس الطريقة مع ملفات Excel المسطحة.', ref:'get-data-performance' },
+
+  { type:'yesno', scenario:CASE_STUDY_SCENARIO,
+    stem:'Statement 2: Connecting to the Azure Analysis Services sales projections will most likely use a Live Connection rather than Import.',
+    options:['Yes','No'], correct:[0], lockPrev:true,
+    explain:'صح — الاتصال بـ Azure Analysis Services بيكون عادة Live Connection يستخدم الموديل الموجود مباشرة.', ref:'get-data-analysis-services' },
+
+  { type:'yesno', scenario:CASE_STUDY_SCENARIO,
+    stem:'Statement 3: The Cosmos DB shipment JSON records may require expanding nested columns in Power Query before they can be used as a flat table.',
+    options:['Yes','No'], correct:[0], lockPrev:true,
+    explain:'صح — مستندات JSON غالباً فيها حقول متداخلة محتاجة Expand قبل ما تستخدمها كجدول مسطح عادي.', ref:'get-data-nosql' },
+];
+
+/* =========================================================================
+   ENGINE (logic + scoring). Pure vanilla JS, no dependencies.
+   ========================================================================= */
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null); // null | array of selected option indices
+let farthestReached = 0; // used to enforce lockPrev
+
+const screenStart = document.getElementById('screen-start');
+const screenQuiz = document.getElementById('screen-quiz');
+const screenResults = document.getElementById('screen-results');
+const screenReview = document.getElementById('screen-review');
+
+document.getElementById('btn-start').addEventListener('click', () => {
+  screenStart.classList.add('hidden');
+  screenQuiz.classList.remove('hidden');
+  renderQuestion();
+});
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    if (current > farthestReached) farthestReached = current;
+    renderQuestion();
+  } else {
+    finish();
+  }
+});
+
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (current > 0) {
+    current--;
+    renderQuestion();
+  }
+});
+
+document.getElementById('btn-retry').addEventListener('click', () => {
+  current = 0; farthestReached = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  screenResults.classList.add('hidden');
+  screenReview.innerHTML = '';
+  screenStart.classList.remove('hidden');
+});
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  document.getElementById('q-meta').textContent = `Question ${current + 1} of ${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = ((current) / (QUESTIONS.length - 1) * 100) + '%';
+
+  const scenarioBox = document.getElementById('q-scenario-box');
+  if (q.scenario) {
+    scenarioBox.textContent = q.scenario;
+    scenarioBox.classList.remove('hidden');
+  } else {
+    scenarioBox.classList.add('hidden');
+  }
+
+  document.getElementById('q-stem').textContent = q.stem + (q.type === 'multi' ? '  (Select ' + q.correct.length + ')' : '');
+
+  const optsBox = document.getElementById('q-options');
+  optsBox.innerHTML = '';
+  const inputType = q.type === 'multi' ? 'checkbox' : 'radio';
+  const selected = answers[current] || [];
+
+  q.options.forEach((optText, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (selected.includes(i) ? ' selected' : '');
+    const input = document.createElement('input');
+    input.type = inputType;
+    input.name = 'opt';
+    input.checked = selected.includes(i);
+    input.addEventListener('change', () => selectOption(i));
+    const label = document.createElement('span');
+    label.textContent = optText;
+    div.appendChild(input);
+    div.appendChild(label);
+    div.addEventListener('click', (e) => { if (e.target !== input) { input.checked = !input.checked; selectOption(i); } });
+    optsBox.appendChild(div);
+  });
+
+  // JS HOOK: lockPrev enforces the real-exam "can't go back" rule inside the case-study block —
+  // once you're viewing a locked question, Previous is disabled so you can't return to an earlier one.
+  const prevBtn = document.getElementById('btn-prev');
+  prevBtn.disabled = current === 0 || q.lockPrev === true;
+
+  document.getElementById('btn-next').textContent = current === QUESTIONS.length - 1 ? 'إنهاء الاختبار' : 'التالي';
+}
+
+function selectOption(i) {
+  const q = QUESTIONS[current];
+  let sel = answers[current] ? [...answers[current]] : [];
+  if (q.type === 'multi') {
+    if (sel.includes(i)) sel = sel.filter(x => x !== i);
+    else sel.push(i);
+  } else {
+    sel = [i];
+  }
+  answers[current] = sel;
+  renderQuestion();
+}
+
+function isCorrect(qIndex) {
+  const q = QUESTIONS[qIndex];
+  const given = (answers[qIndex] || []).slice().sort();
+  const correct = q.correct.slice().sort();
+  return given.length === correct.length && given.every((v, i) => v === correct[i]);
+}
+
+function finish() {
+  screenQuiz.classList.add('hidden');
+  let correctCount = 0;
+  QUESTIONS.forEach((q, i) => { if (isCorrect(i)) correctCount++; });
+  const score1000 = Math.round((correctCount / QUESTIONS.length) * 1000);
+  const pass = score1000 >= 700;
+
+  document.getElementById('score-num').textContent = score1000 + '/1000';
+  document.getElementById('score-verdict').innerHTML = pass
+    ? '<span class="pass"><i class="fa-solid fa-circle-check"></i> ناجح — لو ده الامتحان الحقيقي كنت هتعدي!</span>'
+    : '<span class="fail"><i class="fa-solid fa-circle-xmark"></i> لسه محتاج مذاكرة — درجة النجاح 700</span>';
+  document.getElementById('score-raw').textContent = `${correctCount} من ${QUESTIONS.length} إجابة صحيحة`;
+  screenResults.classList.remove('hidden');
+
+  renderReview();
+}
+
+function renderReview() {
+  let html = '<h2 style="margin:20px 0 14px;">مراجعة الإجابات</h2>';
+  QUESTIONS.forEach((q, i) => {
+    const correct = isCorrect(i);
+    const given = answers[i] || [];
+    const givenText = given.length ? given.map(idx => q.options[idx]).join(' / ') : '(لم تتم الإجابة)';
+    const correctText = q.correct.map(idx => q.options[idx]).join(' / ');
+    html += `<div class="review-item ${correct ? 'correct' : 'wrong'}">
+      <div class="q-meta">Question ${i + 1}</div>
+      <div class="q-stem" style="font-size:0.98rem;">${escapeHtml(q.stem)}</div>
+      <div class="review-ans">إجابتك: <strong>${escapeHtml(givenText)}</strong></div>
+      ${correct ? '' : `<div class="review-ans">الإجابة الصحيحة: <strong>${escapeHtml(correctText)}</strong></div>`}
+      <div class="review-explain">${escapeHtml(q.explain)} — <a href="index.html#${q.ref}">راجع الجزء ده في الدرس</a></div>
+    </div>`;
+  });
+  screenReview.innerHTML = html;
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
