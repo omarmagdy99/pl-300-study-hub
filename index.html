@@ -56,6 +56,15 @@
             transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
         }
 
+        body, p, h1, h2, h3, h4, h5, h6, li, a, span, code, pre {
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .container, .sidebar, main, .section-card, .hero, .bilingual-block, .lang-col, .screenshot-container, .exam-tip-card, .header-content, .logo-group, .controls-group {
+            min-width: 0;
+        }
+
         body {
             font-family: 'Cairo', 'Inter', sans-serif;
             background-color: var(--bg-main);
@@ -227,6 +236,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .sidebar h3 .toc-chevron {
+            display: none;
         }
 
         .toc-list {
@@ -629,6 +642,117 @@
             color: var(--pbi-yellow);
             text-decoration: none;
         }
+
+        /* Mobile Responsiveness & Collapsible TOC */
+        @media (max-width: 768px) {
+            header {
+                padding: 10px 14px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                width: 100%;
+            }
+
+            .logo-group {
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .logo-text h1 {
+                font-size: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .controls-group {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .lang-switch {
+                max-width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .lang-btn {
+                padding: 5px 8px;
+                font-size: 0.78rem;
+            }
+
+            .hero {
+                padding: 24px 16px;
+            }
+
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+            }
+
+            .container {
+                padding: 0 12px;
+                margin: 16px auto;
+            }
+
+            .section-card {
+                padding: 18px 14px;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .sidebar h3 {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                color: var(--text-primary);
+                padding: 10px 14px;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-size: 0.95rem;
+                font-weight: 600;
+                margin-bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                user-select: none;
+                transition: border-color 0.2s ease, color 0.2s ease;
+            }
+
+            .sidebar h3:hover, .sidebar h3.open {
+                border-color: var(--pbi-yellow);
+                color: var(--pbi-yellow);
+            }
+
+            .sidebar h3 .toc-chevron {
+                display: inline-block;
+                transition: transform 0.2s ease;
+            }
+
+            .sidebar h3.open .toc-chevron {
+                transform: rotate(180deg);
+            }
+
+            .toc-list {
+                display: none;
+                margin-top: 12px;
+            }
+
+            .toc-list.open {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body>
@@ -670,7 +794,10 @@
         
         <!-- Sidebar Navigation / TOC -->
         <aside class="sidebar">
-            <h3><i class="fa-solid fa-list-ul"></i> محتويات الدرس</h3>
+            <h3>
+                <span><i class="fa-solid fa-list-ul"></i> محتويات الدرس</span>
+                <i class="fa-solid fa-chevron-down toc-chevron"></i>
+            </h3>
             <ul class="toc-list">
                 <li class="toc-item">
                     <a href="#intro" class="active">
@@ -1642,6 +1769,31 @@
         function closeLightbox() {
             document.getElementById("lightboxModal").classList.remove("active");
         }
+
+        // Mobile TOC Toggle
+        document.addEventListener("DOMContentLoaded", function() {
+            const tocHeader = document.querySelector(".sidebar h3");
+            const tocList = document.querySelector(".toc-list");
+            
+            if (tocHeader && tocList) {
+                tocHeader.addEventListener("click", function() {
+                    if (window.innerWidth <= 768) {
+                        tocList.classList.toggle("open");
+                        tocHeader.classList.toggle("open");
+                    }
+                });
+
+                const tocLinks = tocList.querySelectorAll("a");
+                tocLinks.forEach(link => {
+                    link.addEventListener("click", function() {
+                        if (window.innerWidth <= 768) {
+                            tocList.classList.remove("open");
+                            tocHeader.classList.remove("open");
+                        }
+                    });
+                });
+            }
+        });
     </script>
 </body>
 </html>
